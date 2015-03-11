@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Loader;
 import android.database.ContentObserver;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.CancellationSignal;
 import android.os.OperationCanceledException;
 import android.util.Log;
@@ -30,7 +31,18 @@ public class CursorLoaderWithoutProvider extends AsyncTaskLoader<Cursor> {
             mCancellationSignal = new CancellationSignal();
         }
         try {
-            Cursor cursor = buildCursor();
+            FamilyDbHelper dbHelper = new FamilyDbHelper(getContext());
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+            String table = FamilyContract.FamilyEntry.TABLE_NAME;
+            String[] columns = {FamilyContract.FamilyEntry.COLUMN_NAME_NAME};
+            String selection = null;
+            String[] selectionArgs = null;
+            String groupBy = null;
+            String having = null;
+            String orderBy = null;
+
+            Cursor cursor = db.query(table, columns, selection, selectionArgs, groupBy, having, orderBy);
             if (cursor != null) {
                 try {
                     cursor.getCount();
@@ -48,6 +60,7 @@ public class CursorLoaderWithoutProvider extends AsyncTaskLoader<Cursor> {
         }
     }
 
+    @Override
     public void cancelLoadInBackground() {
         Log.d(TAG, "cancelLoadInBackground()");
         super.cancelLoadInBackground();
@@ -59,6 +72,7 @@ public class CursorLoaderWithoutProvider extends AsyncTaskLoader<Cursor> {
         }
     }
 
+    @Override
     public void deliverResult(Cursor cursor) {
         if (isReset()) {
             if (cursor != null) {
