@@ -70,7 +70,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         // as you specify a parent activity in AndroidManifest.xml.
         switch (item.getItemId()) {
             case R.id.action_add:
-                Intent intent = new Intent(####);
+                Intent intent = new Intent(this, InputFormActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.action_settings:

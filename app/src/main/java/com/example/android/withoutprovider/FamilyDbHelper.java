@@ -27,7 +27,7 @@ public class FamilyDbHelper extends SQLiteOpenHelper {
                         FamilyContract.FamilyEntry._ID + " integer primary key, " +
                         FamilyContract.FamilyEntry.COLUMN_NAME_NAME + " text, " +
                         FamilyContract.FamilyEntry.COLUMN_NAME_GENDER + " text, " +
-                        FamilyContract.FamilyEntry.COLUMN_NAME_BIRTHDAY + " integer, " +
+                        FamilyContract.FamilyEntry.COLUMN_NAME_BIRTHDAY + " integer " +
                         ");"
         );
 
