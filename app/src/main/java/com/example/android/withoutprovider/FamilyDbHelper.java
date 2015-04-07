@@ -12,7 +12,7 @@ public class FamilyDbHelper extends SQLiteOpenHelper {
     private final String TAG = "FamilyDbHelper";
 
     private static final String DATABASE_NAME = "withoutProvider.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public FamilyDbHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

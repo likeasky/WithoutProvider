@@ -20,6 +20,7 @@ import java.util.Map;
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private String TAG = "MainActivity";
+    private SimpleCursorAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,12 +46,12 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         int layout = android.R.layout.simple_list_item_1;
         Cursor c = null;
-        String[] from = {"title"};
+        String[] from = { FamilyContract.FamilyEntry.COLUMN_NAME_NAME };
         int[] to = {android.R.id.text1};
         int flags = 0;
 
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, layout, c, from, to, flags);
-        setListAdapter(adapter);
+        mAdapter = new SimpleCursorAdapter(this, layout, c, from, to, flags);
+        setListAdapter(mAdapter);
 
         getLoaderManager().initLoader(0, null, this);
     }
@@ -89,10 +90,12 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.d(TAG, "onLoadFinished()");
+        mAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset()");
+        mAdapter.swapCursor(null);
     }
 }

@@ -35,7 +35,10 @@ public class CursorLoaderWithoutProvider extends AsyncTaskLoader<Cursor> {
             SQLiteDatabase db = dbHelper.getReadableDatabase();
 
             String table = FamilyContract.FamilyEntry.TABLE_NAME;
-            String[] columns = {FamilyContract.FamilyEntry.COLUMN_NAME_NAME};
+            String[] columns = {
+                    FamilyContract.FamilyEntry._ID,
+                    FamilyContract.FamilyEntry.COLUMN_NAME_NAME
+            };
             String selection = null;
             String[] selectionArgs = null;
             String groupBy = null;
@@ -74,6 +77,7 @@ public class CursorLoaderWithoutProvider extends AsyncTaskLoader<Cursor> {
 
     @Override
     public void deliverResult(Cursor cursor) {
+        Log.d(TAG, "deliverResult()");
         if (isReset()) {
             if (cursor != null) {
                 cursor.close();
