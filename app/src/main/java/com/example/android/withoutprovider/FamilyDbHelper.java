@@ -22,6 +22,7 @@ public class FamilyDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         Log.d(TAG, "onCreate()");
+        // create sql문을 entry로 이동하는게 나을수도??
         db.execSQL(
                 "create table " + FamilyContract.FamilyEntry.TABLE_NAME + " (" +
                         FamilyContract.FamilyEntry._ID + " integer primary key, " +

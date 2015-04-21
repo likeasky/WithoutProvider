@@ -21,5 +21,8 @@ public final class FamilyContract {
         public static final String COLUMN_NAME_BIRTHDAY = "birthday";
     }
 
+    // 다른 테이블.
+
+    // 또 다른 테이블.
 
 }

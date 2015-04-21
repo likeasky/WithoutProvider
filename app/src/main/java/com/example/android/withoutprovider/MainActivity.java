@@ -2,9 +2,11 @@ package com.example.android.withoutprovider;
 
 import android.app.ListActivity;
 import android.app.LoaderManager;
+import android.content.ContentValues;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
@@ -16,17 +18,21 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private String TAG = "MainActivity";
     private SimpleCursorAdapter mAdapter;
+    private MyDb myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         Log.d(TAG, "onCreate()");
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
+
+        myDb = new MyDb(this);
 
 /*
         ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
@@ -69,12 +75,31 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
+
+
         switch (item.getItemId()) {
+            case R.id.action_plus:
+                String table = FamilyContract.FamilyEntry.TABLE_NAME;
+                String nullColumnHack = null;
+                ContentValues values = new ContentValues();
+                values.put(FamilyContract.FamilyEntry.COLUMN_NAME_NAME, new Random().nextInt(100));
+                myDb.create(table, nullColumnHack, values);
+                return true;
+            case R.id.action_minus:
+                return true;
             case R.id.action_add:
                 Intent intent = new Intent(this, InputFormActivity.class);
                 startActivity(intent);
                 return true;
             case R.id.action_settings:
+                FamilyDbHelper dbHelper = new FamilyDbHelper(this);
+                SQLiteDatabase db = dbHelper.getReadableDatabase();
+                Cursor c = db.rawQuery("select * from " + FamilyContract.FamilyEntry.TABLE_NAME, null);
+                while (c.moveToNext()) {
+                    Log.d(TAG, "id:" + c.getInt(c.getColumnIndexOrThrow(FamilyContract.FamilyEntry._ID)));
+                    Log.d(TAG, FamilyContract.FamilyEntry.COLUMN_NAME_NAME + ":" + c.getString(c.getColumnIndex(FamilyContract.FamilyEntry.COLUMN_NAME_NAME)));
+                    Log.d(TAG, FamilyContract.FamilyEntry.COLUMN_NAME_GENDER + ":" + c.getString(c.getColumnIndex(FamilyContract.FamilyEntry.COLUMN_NAME_GENDER)));
+                }
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

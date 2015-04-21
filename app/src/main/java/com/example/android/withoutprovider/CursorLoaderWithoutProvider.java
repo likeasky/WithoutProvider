@@ -149,4 +149,9 @@ public class CursorLoaderWithoutProvider extends AsyncTaskLoader<Cursor> {
         mCursor = null;
     }
 
+    @Override
+    protected void onForceLoad() {
+        Log.d(TAG, "onForceLoad()");
+        super.onForceLoad();
+    }
 }
