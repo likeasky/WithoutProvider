@@ -3,6 +3,7 @@ package com.example.android.withoutprovider;
 import android.app.ListActivity;
 import android.app.LoaderManager;
 import android.content.ContentValues;
+import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
 import android.database.Cursor;
@@ -24,6 +25,7 @@ import java.util.Random;
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private String TAG = "MainActivity";
     private SimpleCursorAdapter mAdapter;
+    private MyDb myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +59,8 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         mAdapter = new SimpleCursorAdapter(this, layout, c, from, to, flags);
         setListAdapter(mAdapter);
 
-        getLoaderManager().initLoader(0, null, this);
+        Loader loader = getLoaderManager().initLoader(0, null, this);
+        myDb = new MyDb(this, loader);
     }
 
 
@@ -129,5 +132,9 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     void onAddPositiveBtnClick(String name, String gender) {
         Log.d(TAG, "name:" + name + ", gender:" + gender);
+        ContentValues values = new ContentValues();
+        values.put(FamilyContract.FamilyEntry.COLUMN_NAME_NAME, name);
+        values.put(FamilyContract.FamilyEntry.COLUMN_NAME_GENDER, gender);
+        myDb.create(values);
     }
 }

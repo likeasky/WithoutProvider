@@ -2,6 +2,8 @@ package com.example.android.withoutprovider;
 
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.CursorLoader;
+import android.content.Loader;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.util.Log;
@@ -14,24 +16,30 @@ public class MyDb {
 
     private Context ctx;
     private FamilyDbHelper sqlHelper;
-    private CursorLoaderWithoutProvider loader;
+//    private CursorLoaderWithoutProvider loader;
+    private Loader loader;
 
-    public MyDb(Context ctx) {
+    public MyDb(Context ctx, Loader loader) {
         Log.d(TAG, "MyDb()");
         this.ctx = ctx;
         sqlHelper = new FamilyDbHelper(ctx);
+        this.loader = loader;
     }
 
-    void create(String table, String nullColumnHack, ContentValues values) {
+    void create(ContentValues values) {
         Log.d(TAG, "create()");
+        String table = FamilyContract.FamilyEntry.TABLE_NAME;
+        String nullColumnHack = null;
         new InsertTask().execute(sqlHelper, table, nullColumnHack, values);
     }
+
+    void
 
     private class InsertTask extends AsyncTask<Object, Void, Long> {
         @Override
         protected Long doInBackground(Object... params) {
             Log.d(TAG, "InsertTask.doInBackground()");
-            FamilyDbHelper sqlHelper = (FamilyDbHelper) params[0];
+//            FamilyDbHelper sqlHelper = (FamilyDbHelper) params[0];
             String table = (String) params[1];
             String nullColumnHack = (String) params[2];
             ContentValues values = (ContentValues) params[3];
