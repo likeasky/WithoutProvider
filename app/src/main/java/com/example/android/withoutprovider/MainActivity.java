@@ -24,7 +24,6 @@ import java.util.Random;
 public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
     private String TAG = "MainActivity";
     private SimpleCursorAdapter mAdapter;
-    private MyDb myDb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +31,6 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         super.onCreate(savedInstanceState);
 //        setContentView(R.layout.activity_main);
 
-        myDb = new MyDb(this);
 
 /*
         ArrayList<HashMap<String, String>> data = new ArrayList<HashMap<String, String>>();
@@ -65,6 +63,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        Log.d(TAG, "onCreateOptionsMenu()");
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -72,6 +71,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Log.d(TAG, "onOptionsItemSelected()");
         // Handle action bar item clicks here. The action bar will
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
@@ -79,17 +79,20 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         switch (item.getItemId()) {
             case R.id.action_plus:
-                String table = FamilyContract.FamilyEntry.TABLE_NAME;
-                String nullColumnHack = null;
-                ContentValues values = new ContentValues();
-                values.put(FamilyContract.FamilyEntry.COLUMN_NAME_NAME, new Random().nextInt(100));
-                myDb.create(table, nullColumnHack, values);
+//                String table = FamilyContract.FamilyEntry.TABLE_NAME;
+//                String nullColumnHack = null;
+//                ContentValues values = new ContentValues();
+//                values.put(FamilyContract.FamilyEntry.COLUMN_NAME_NAME, new Random().nextInt(100));
+//                myDb.create(table, nullColumnHack, values);
                 return true;
             case R.id.action_minus:
                 return true;
             case R.id.action_add:
-                Intent intent = new Intent(this, InputFormActivity.class);
-                startActivity(intent);
+//                Intent intent = new Intent(this, InputFormActivity.class);
+//                startActivity(intent);
+//                return true;
+                AddDialogFragment dialog = new AddDialogFragment();
+                dialog.show(getFragmentManager(), "AddDialogFragment");
                 return true;
             case R.id.action_settings:
                 FamilyDbHelper dbHelper = new FamilyDbHelper(this);
@@ -109,7 +112,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         Log.d(TAG, "onCreateLoader()");
-        return new CursorLoaderWithoutProvider(this);
+        return new MyCursorLoader(this);
     }
 
     @Override
@@ -122,5 +125,9 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     public void onLoaderReset(Loader<Cursor> loader) {
         Log.d(TAG, "onLoaderReset()");
         mAdapter.swapCursor(null);
+    }
+
+    void onAddPositiveBtnClick(String name, String gender) {
+        Log.d(TAG, "name:" + name + ", gender:" + gender);
     }
 }

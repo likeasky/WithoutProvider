@@ -9,5 +9,7 @@
     <string name="add">추가</string>
     <string name="action_plus">더하기</string>
     <string name="action_minus">빼기</string>
+    <string name="dialog_add">Add</string>
+    <string name="cancel">Cancel</string>
 
 </resources>
