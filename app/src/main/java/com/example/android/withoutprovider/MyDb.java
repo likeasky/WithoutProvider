@@ -82,7 +82,40 @@ public class MyDb {
         protected Cursor doInBackground(Object... params) {
             Log.d(TAG, "ReadTask.doInBackground()");
             SQLiteDatabase db = sqlHelper.getReadableDatabase();
-            db.query();
+//            db.query();
+        }
+    }
+
+    private class UpdateTask extends AsyncTask<Object, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Object... params) {
+            SQLiteDatabase db = sqlHelper.getWritableDatabase();
+            String table = FamilyContract.FamilyEntry.TABLE_NAME;
+
+            int numOfRows = db.update(table, values, whereClause, whereArgs);
+            return numOfRows;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            Log.d(TAG, "UpdateTask.onPostExecute()");
+            loader.onContentChanged();
+        }
+    }
+
+    private class DeleteTask extends AsyncTask<Object, Void, Integer> {
+        @Override
+        protected Integer doInBackground(Object... params) {
+            Log.d(TAG, "DeleteTask.doInBackground()");
+            SQLiteDatabase db = sqlHelper.getWritableDatabase();
+            int numOfRows = db.delete(table, whereClause, whereArgs);
+            return numOfRows;
+        }
+
+        @Override
+        protected void onPostExecute(Integer result) {
+            Log.d(TAG, "DeleteTask.onPostExecute()");
+            loader.onContentChanged();
         }
     }
 }
