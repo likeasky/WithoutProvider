@@ -36,11 +36,12 @@ public class MyDb {
 
     Cursor read() {
         Log.d(TAG, "read()");
-        new ReadTask.execute(table);
+//        new ReadTask.execute(table);
+        return null;
     }
 
     Cursor readAll() {
-
+        return null;
     }
 
     void update() {
@@ -51,7 +52,7 @@ public class MyDb {
 
     }
 
-    void
+
 
     private class InsertTask extends AsyncTask<Object, Void, Long> {
         @Override
@@ -83,6 +84,7 @@ public class MyDb {
             Log.d(TAG, "ReadTask.doInBackground()");
             SQLiteDatabase db = sqlHelper.getReadableDatabase();
 //            db.query();
+            return null;
         }
     }
 
@@ -92,8 +94,9 @@ public class MyDb {
             SQLiteDatabase db = sqlHelper.getWritableDatabase();
             String table = FamilyContract.FamilyEntry.TABLE_NAME;
 
-            int numOfRows = db.update(table, values, whereClause, whereArgs);
-            return numOfRows;
+//            int numOfRows = db.update(table, values, whereClause, whereArgs);
+//            return numOfRows;
+            return null;
         }
 
         @Override
@@ -108,8 +111,9 @@ public class MyDb {
         protected Integer doInBackground(Object... params) {
             Log.d(TAG, "DeleteTask.doInBackground()");
             SQLiteDatabase db = sqlHelper.getWritableDatabase();
-            int numOfRows = db.delete(table, whereClause, whereArgs);
-            return numOfRows;
+//            int numOfRows = db.delete(table, whereClause, whereArgs);
+//            return numOfRows;
+            return null;
         }
 
         @Override

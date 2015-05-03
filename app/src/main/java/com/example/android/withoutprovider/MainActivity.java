@@ -10,8 +10,12 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.ActionMode;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.AbsListView;
+import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.SimpleCursorAdapter;
 
@@ -22,7 +26,7 @@ import java.util.Map;
 import java.util.Random;
 
 
-public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor> {
+public class MainActivity extends ListActivity implements LoaderManager.LoaderCallbacks<Cursor>, AbsListView.MultiChoiceModeListener {
     private String TAG = "MainActivity";
     private SimpleCursorAdapter mAdapter;
     private MyDb myDb;
@@ -50,7 +54,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 */
 
 
-        int layout = android.R.layout.simple_list_item_1;
+        int layout = android.R.layout.simple_list_item_multiple_choice;
         Cursor c = null;
         String[] from = { FamilyContract.FamilyEntry.COLUMN_NAME_NAME };
         int[] to = {android.R.id.text1};
@@ -61,6 +65,10 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
         Loader loader = getLoaderManager().initLoader(0, null, this);
         myDb = new MyDb(this, loader);
+
+        ListView listView = getListView();
+        listView.setChoiceMode(ListView.CHOICE_MODE_MULTIPLE_MODAL);
+        listView.setMultiChoiceModeListener(this);
     }
 
 
@@ -136,5 +144,42 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
         values.put(FamilyContract.FamilyEntry.COLUMN_NAME_NAME, name);
         values.put(FamilyContract.FamilyEntry.COLUMN_NAME_GENDER, gender);
         myDb.create(values);
+    }
+
+    @Override
+    public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+        Log.d(TAG, "onItemCheckedStateChanged()");
+        MenuItem editItem = (MenuItem) mode.getMenu().findItem(R.id.edit);
+        Log.d(TAG, "count:" + getListView().getCheckedItemCount());
+        if (getListView().getCheckedItemCount() > 1) {
+            editItem.setEnabled(false);
+        } else {
+            editItem.setEnabled(true);
+        }
+    }
+
+    @Override
+    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
+        Log.d(TAG, "onCreateActionMode()");
+        MenuInflater inflater = mode.getMenuInflater();
+        inflater.inflate(R.menu.main_actionmode, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
+        Log.d(TAG, "onPrepareActionMode()");
+        return false;
+    }
+
+    @Override
+    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
+        Log.d(TAG, "onActionItemClicked()");
+        return false;
+    }
+
+    @Override
+    public void onDestroyActionMode(ActionMode mode) {
+        Log.d(TAG, "onDestroyActionMode()");
     }
 }

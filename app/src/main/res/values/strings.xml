@@ -11,5 +11,7 @@
     <string name="action_minus">빼기</string>
     <string name="dialog_add">Add</string>
     <string name="cancel">Cancel</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
 
 </resources>
