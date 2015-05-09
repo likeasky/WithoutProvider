@@ -148,6 +148,7 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
 
     @Override
     public void onItemCheckedStateChanged(ActionMode mode, int position, long id, boolean checked) {
+        // 여러개를 한번에 지울경우 각 아이템이 줄어들때마다 불려짐. onLoadFinished()다음에 지운아이템수만큼 불림.
         Log.d(TAG, "onItemCheckedStateChanged()");
         MenuItem editItem = (MenuItem) mode.getMenu().findItem(R.id.edit);
         Log.d(TAG, "count:" + getListView().getCheckedItemCount());
@@ -175,7 +176,26 @@ public class MainActivity extends ListActivity implements LoaderManager.LoaderCa
     @Override
     public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
         Log.d(TAG, "onActionItemClicked()");
-        return false;
+        long[] ids = getListView().getCheckedItemIds();
+        switch (item.getItemId()) {
+            case R.id.edit:
+                Log.d(TAG, "edit");
+                Log.d(TAG, "id:" + ids[0]);
+
+                break;
+            case R.id.delete:
+                Log.d(TAG, "delete");
+                myDb.delete(ids);
+//                for (long id : ids) {
+//                    // 지우는게 많을 경우 매번 loader와 actionmode의 메소드가 불필요하게 불려짐.
+//                    Log.d(TAG, "id:" + id);
+//                    myDb.delete(id);
+//                }
+                break;
+            default:
+                return false;
+        }
+        return true;
     }
 
     @Override

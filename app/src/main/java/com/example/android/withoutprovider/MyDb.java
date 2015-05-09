@@ -2,7 +2,6 @@ package com.example.android.withoutprovider;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -16,14 +15,14 @@ public class MyDb {
     private final String TAG = "MyDb";
 
     private Context ctx;
-    private FamilyDbHelper sqlHelper;
+    private FamilyDbHelper dbHelper;
 //    private CursorLoaderWithoutProvider loader;
     private Loader loader;
 
     public MyDb(Context ctx, Loader loader) {
         Log.d(TAG, "MyDb()");
         this.ctx = ctx;
-        sqlHelper = new FamilyDbHelper(ctx);
+        dbHelper = new FamilyDbHelper(ctx);
         this.loader = loader;
     }
 
@@ -31,7 +30,7 @@ public class MyDb {
         Log.d(TAG, "create()");
         String table = FamilyContract.FamilyEntry.TABLE_NAME;
         String nullColumnHack = null;
-        new InsertTask().execute(sqlHelper, table, nullColumnHack, values);
+        new InsertTask().execute(dbHelper, table, nullColumnHack, values);
     }
 
     Cursor read() {
@@ -44,12 +43,36 @@ public class MyDb {
         return null;
     }
 
-    void update() {
-
+    void update(long id, ContentValues values) {
+        Log.d(TAG, "update()");
+        String table = FamilyContract.FamilyEntry.TABLE_NAME;
+        String whereClause = FamilyContract.FamilyEntry._ID + "=?";
+        String[] whereArgs = {String.valueOf(id)};
+        new UpdateTask().execute(table, values, whereClause, whereArgs);
     }
 
-    void delete() {
+    void delete(long id) {
+        Log.d(TAG, "delete()");
+        String table = FamilyContract.FamilyEntry.TABLE_NAME;
+        String whereClause = FamilyContract.FamilyEntry._ID + "=?";
+        String[] whereArgs = {String.valueOf(id)};
+        new DeleteTask().execute(table, whereClause, whereArgs);
+    }
 
+    void delete(long[] ids) {
+        Log.d(TAG, "delete(2)");
+        String table = FamilyContract.FamilyEntry.TABLE_NAME;
+        String str = "";
+        String[] whereArgs = new String[ids.length];
+        str += "?";
+        whereArgs[0] = String.valueOf(ids[0]);
+        for (int i = 1; i < ids.length; i++) {
+            str += ", ?";
+            whereArgs[i] = String.valueOf(ids[i]);
+        }
+        Log.d(TAG, "str:" + str);
+        String whereClause = FamilyContract.FamilyEntry._ID + " in (" + str + ")";
+        new DeleteTask().execute(table, whereClause, whereArgs);
     }
 
 
@@ -58,12 +81,12 @@ public class MyDb {
         @Override
         protected Long doInBackground(Object... params) {
             Log.d(TAG, "InsertTask.doInBackground()");
-//            FamilyDbHelper sqlHelper = (FamilyDbHelper) params[0];
+//            FamilyDbHelper dbHelper = (FamilyDbHelper) params[0];
             String table = (String) params[1];
             String nullColumnHack = (String) params[2];
             ContentValues values = (ContentValues) params[3];
 
-            SQLiteDatabase db = sqlHelper.getWritableDatabase();
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
             long rowId = db.insert(table, nullColumnHack, values);
             return rowId;
         }
@@ -82,7 +105,7 @@ public class MyDb {
         @Override
         protected Cursor doInBackground(Object... params) {
             Log.d(TAG, "ReadTask.doInBackground()");
-            SQLiteDatabase db = sqlHelper.getReadableDatabase();
+            SQLiteDatabase db = dbHelper.getReadableDatabase();
 //            db.query();
             return null;
         }
@@ -91,12 +114,14 @@ public class MyDb {
     private class UpdateTask extends AsyncTask<Object, Void, Integer> {
         @Override
         protected Integer doInBackground(Object... params) {
-            SQLiteDatabase db = sqlHelper.getWritableDatabase();
-            String table = FamilyContract.FamilyEntry.TABLE_NAME;
-
-//            int numOfRows = db.update(table, values, whereClause, whereArgs);
-//            return numOfRows;
-            return null;
+            Log.d(TAG, "UpdateTask.doInBackground()");
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String table = (String) params[0];
+            ContentValues values = (ContentValues) params[1];
+            String whereClause = (String) params[2];
+            String[] whereArgs = (String[]) params[3];
+            int numOfRows = db.update(table, values, whereClause, whereArgs);
+            return numOfRows;
         }
 
         @Override
@@ -110,10 +135,12 @@ public class MyDb {
         @Override
         protected Integer doInBackground(Object... params) {
             Log.d(TAG, "DeleteTask.doInBackground()");
-            SQLiteDatabase db = sqlHelper.getWritableDatabase();
-//            int numOfRows = db.delete(table, whereClause, whereArgs);
-//            return numOfRows;
-            return null;
+            SQLiteDatabase db = dbHelper.getWritableDatabase();
+            String table = (String) params[0];
+            String whereClause = (String) params[1];
+            String[] whereArgs = (String[]) params[2];
+            int numOfRows = db.delete(table, whereClause, whereArgs);
+            return numOfRows;
         }
 
         @Override
